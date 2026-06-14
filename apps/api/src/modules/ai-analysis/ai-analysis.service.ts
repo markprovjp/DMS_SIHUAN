@@ -33,6 +33,7 @@ const InsightJsonSchema = {
     "evidence",
     "affectedEmployees",
     "affectedDepartments",
+    "affectedCustomers",
     "suggestedAction",
   ],
   additionalProperties: false,

@@ -6,7 +6,7 @@ const InsightSchema = z.object({
   evidence: z.string(),
   affectedEmployees: z.array(z.string()),
   affectedDepartments: z.array(z.string()),
-  affectedCustomers: z.array(z.string()).optional().nullable(),
+  affectedCustomers: z.array(z.string()),
   suggestedAction: z.string(),
 });
 
@@ -26,7 +26,7 @@ export const AiAnalysisOutputSchema = z.object({
       priority: z.enum(["low", "medium", "high"]),
       action: z.string(),
       ownerRole: z.string(),
-      dueHint: z.string().optional().nullable(),
+      dueHint: z.string(),
     }),
   ),
   employeeComments: z.array(
@@ -60,7 +60,7 @@ export const VisionOutputSchema = z.object({
   confidence: z.number().min(0).max(1),
   reason: z.string(),
   visibleIssues: z.array(z.string()),
-  suggestedAction: z.string().optional().nullable(),
+  suggestedAction: z.string(),
 });
 
 export type VisionOutput = z.infer<typeof VisionOutputSchema>;
