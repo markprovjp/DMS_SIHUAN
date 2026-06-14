@@ -1,0 +1,32 @@
+{
+  "name": "@dms-admin/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "prettier --check \"src/**/*.{ts,tsx}\" --ignore-unknown",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.3.0",
+    "@dms-admin/shared": "workspace:*",
+    "@tanstack/react-query": "^5.22.2",
+    "antd": "^5.14.2",
+    "axios": "^1.6.7",
+    "echarts": "^5.5.0",
+    "lucide-react": "^0.331.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.3"
+  }
+}

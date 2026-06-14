@@ -1,0 +1,43 @@
+{
+  "version": "5.22.0",
+  "steps": [
+    {
+      "step": "addColumnsToTable",
+      "table": "User",
+      "columns": [
+        { "name": "isActive", "type": "BOOLEAN", "default": true, "nullable": false },
+        { "name": "lastLoginAt", "type": "TIMESTAMP(3)", "nullable": true }
+      ]
+    },
+    {
+      "step": "createTable",
+      "table": "RefreshToken",
+      "columns": [
+        { "name": "id", "type": "TEXT", "primary": true },
+        { "name": "userId", "type": "TEXT", "nullable": false },
+        { "name": "tokenHash", "type": "TEXT", "unique": true, "nullable": false },
+        { "name": "family", "type": "TEXT", "nullable": false },
+        { "name": "expiresAt", "type": "TIMESTAMP(3)", "nullable": false },
+        { "name": "revokedAt", "type": "TIMESTAMP(3)", "nullable": true },
+        { "name": "replacedBy", "type": "TEXT", "nullable": true },
+        { "name": "createdAt", "type": "TIMESTAMP(3)", "default": "now()", "nullable": false },
+        { "name": "userAgent", "type": "TEXT", "nullable": true },
+        { "name": "ipAddress", "type": "TEXT", "nullable": true }
+      ],
+      "foreignKeys": [
+        {
+          "name": "RefreshToken_userId_fkey",
+          "column": "userId",
+          "referencedTable": "User",
+          "referencedColumn": "id",
+          "onDelete": "CASCADE"
+        }
+      ],
+      "indexes": [
+        { "name": "RefreshToken_userId_idx", "columns": ["userId"] },
+        { "name": "RefreshToken_family_idx", "columns": ["family"] },
+        { "name": "RefreshToken_expiresAt_idx", "columns": ["expiresAt"] }
+      ]
+    }
+  ]
+}

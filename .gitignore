@@ -1,0 +1,11 @@
+node_modules/
+.env
+dist/
+.next/
+out/
+build/
+.turbo/
+*.log
+.DS_Store
+package-lock.json
+pnpm-lock.yaml

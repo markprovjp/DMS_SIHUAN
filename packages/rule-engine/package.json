@@ -1,0 +1,21 @@
+{
+  "name": "@dms-admin/rule-engine",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "vitest run",
+    "lint": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" --ignore-unknown",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dms-admin/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.1"
+  }
+}

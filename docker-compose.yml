@@ -1,0 +1,121 @@
+# DMS AI Admin — Development & Production Compose
+#
+# Dev (default):
+#   docker compose up -d
+# Production:
+#   docker compose --profile production up -d
+#   + supply secrets via .env.production or external secret manager
+#
+# IMPORTANT: default credentials in dev override section are DEV ONLY.
+# Production must use strong passwords + JWT_SECRET loaded from secret manager.
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: dms-ai-admin-postgres
+    profiles: [dev, production]
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dms_ai_admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: dms-ai-admin-redis
+    profiles: [dev, production]
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # === Production: API + Web ===
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: dms-ai-admin-api
+    profiles: [production]
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in production}
+      APP_URL: ${APP_URL}
+      AI_PROVIDER: ${AI_PROVIDER}
+      AI_BASE_URL: ${AI_BASE_URL}
+      AI_API_KEY: ${AI_API_KEY}
+      AI_TEXT_MODEL: ${AI_TEXT_MODEL}
+      AI_VISION_MODEL: ${AI_VISION_MODEL}
+      MOBIWORK_API_BASE: ${MOBIWORK_API_BASE}
+      MOBIWORK_USER_ID: ${MOBIWORK_USER_ID}
+      MOBIWORK_TOKEN: ${MOBIWORK_TOKEN}
+      TIMEZONE: ${TIMEZONE:-Asia/Bangkok}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    container_name: dms-ai-admin-web
+    profiles: [production]
+    ports:
+      - '8080:80'
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # === Backup cron (production only) ===
+  postgres-backup:
+    image: prodrigestivill/postgres-backup-local
+    container_name: dms-ai-admin-postgres-backup
+    profiles: [production]
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      POSTGRES_DB: dms_ai_admin
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

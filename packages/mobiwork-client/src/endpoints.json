@@ -1,0 +1,1319 @@
+[
+  {
+    "path": "/OpenAPI/V1/ItemUnit",
+    "method": "GET",
+    "tag": "Unit",
+    "summary": "Đơn vị tính",
+    "operationId": "findItemUnit",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "1 là Hoạt động,0 là Khóa",
+        "schemaType": "string",
+        "default": null,
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/ItemBrand",
+    "method": "GET",
+    "tag": "Brand",
+    "summary": "Danh sách nhãn hiệu",
+    "operationId": "findItemBrand",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/CheckinReason",
+    "method": "GET",
+    "tag": "CheckinReason",
+    "summary": "Danh sách lý do khai báo vị trí",
+    "operationId": "findCheckinReason",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Distributor",
+    "method": "GET",
+    "tag": "Distributor",
+    "summary": "Danh sách nhà phân phối",
+    "operationId": "findItemDistributor",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/ItemIndustry",
+    "method": "GET",
+    "tag": "Industry",
+    "summary": "Danh sách ngành hàng",
+    "operationId": "findItemIndustry",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/ItemSupplier",
+    "method": "GET",
+    "tag": "Supplier",
+    "summary": "Danh sách nhà cung cấp",
+    "operationId": "findItemUnit",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/CustomerType",
+    "method": "GET",
+    "tag": "CustomerType",
+    "summary": "Lấy danh sách",
+    "operationId": "",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/CustomerGroup",
+    "method": "GET",
+    "tag": "CustomerGroup",
+    "summary": "Lấy danh sách",
+    "operationId": "",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/CustomerChannel",
+    "method": "GET",
+    "tag": "CustomerChannel",
+    "summary": "Lấy danh sách",
+    "operationId": "",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/CustomerRegion",
+    "method": "GET",
+    "tag": "CustomerRegion",
+    "summary": "Lấy danh sách",
+    "operationId": "getCustomerRegion",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Product",
+    "method": "GET",
+    "tag": "Product",
+    "summary": "Danh sách sản phẩm",
+    "operationId": "findProduct",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Trạng thái sản phẩm",
+        "schemaType": "boolean",
+        "default": null,
+        "enum": ["Khóa", "Hoạt động"]
+      },
+      {
+        "name": "nha_cung_cap",
+        "required": false,
+        "description": "Mã nhà cung cấp",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhan_hieu",
+        "required": false,
+        "description": "Mã nhãn hiệu",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nganh_hang",
+        "required": false,
+        "description": "Mã ngành hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["cdate", "mdate"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 30, max 1000)",
+        "schemaType": "number",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": null,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Customer",
+    "method": "GET",
+    "tag": "Customer",
+    "summary": "Lấy danh sách khách hàng",
+    "operationId": "getCustomer",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Trạng thái khách hàng",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhan_vien",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "loai_kh",
+        "required": false,
+        "description": "Mã loại khách hàng",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhom_kh",
+        "required": false,
+        "description": "Mã nhóm khách hàng",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "khu_vuc",
+        "required": false,
+        "description": "Mã khu vực khách hàng",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "kenh",
+        "required": false,
+        "description": "Mã kênh khách hàng",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày",
+        "schemaType": "string",
+        "default": "cdate",
+        "enum": ["cdate", "mdate"]
+      },
+      {
+        "name": "page_size",
+        "required": false,
+        "description": "Số item trên 1 trang",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": false,
+        "description": "Trang dữ liệu",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Warehouse",
+    "method": "GET",
+    "tag": "CategorieWarehouse",
+    "summary": "Lấy danh sách",
+    "operationId": "getCategorieWarehouse",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Sale",
+    "method": "GET",
+    "tag": "Sale",
+    "summary": "Danh sách nhân viên",
+    "operationId": "findSale",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": "1",
+        "enum": ["1", "0"]
+      },
+      {
+        "name": "chuc_danh",
+        "required": false,
+        "description": "Status values that need to be considered for filter",
+        "schemaType": "string",
+        "default": null,
+        "enum": ["member", "accountant", "manager", "owner"]
+      },
+      {
+        "name": "phong_ban",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": "MB",
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/SaleGroup",
+    "method": "GET",
+    "tag": "Sale",
+    "summary": "Danh sách phòng ban",
+    "operationId": "findSaleGroup",
+    "parameters": []
+  },
+  {
+    "path": "/OpenAPI/V1/Route",
+    "method": "GET",
+    "tag": "Route",
+    "summary": "Tuyến bán hàng",
+    "operationId": "findRoute",
+    "parameters": [
+      {
+        "name": "phong_nhom_nv",
+        "required": false,
+        "description": "Mã phòng ban để lọc tuyến",
+        "schemaType": "string",
+        "default": "MB",
+        "enum": []
+      },
+      {
+        "name": "ma_nv",
+        "required": false,
+        "description": "Mã nhân viên để lọc tuyến",
+        "schemaType": "string",
+        "default": "Hoaint2",
+        "enum": []
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên một trang(Min 50, max 200)",
+        "schemaType": "number",
+        "default": 50,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/FormCollectData",
+    "method": "GET",
+    "tag": "FormCollectData",
+    "summary": "Lấy dữ liệu 1 biểu mẫu thu thập",
+    "operationId": "FormCollectData",
+    "parameters": [
+      {
+        "name": "formID",
+        "required": true,
+        "description": "ID của biểu mẫu thu thập khi xem dữ liệu hoặc sửa biểu mẫu trên web (chuỗi 16 ký tự ví dụ https://dms.mobiwork.vn/apps/1234567890abcdef)",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "status",
+        "required": false,
+        "description": "Trạng thái bản ghi nếu có thiết lập trong biểu mẫu thu thập theo trường giá trị của trạng thái",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "emailNV",
+        "required": false,
+        "description": "Lọc theo tài khoản email nhân viên",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày",
+        "schemaType": "string",
+        "default": "cdate",
+        "enum": ["cdate", "mdate"]
+      },
+      {
+        "name": "page_size",
+        "required": false,
+        "description": "Số item trên 1 trang",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": false,
+        "description": "Trang dữ liệu",
+        "schemaType": "",
+        "default": null,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/VisitData",
+    "method": "GET",
+    "tag": "VisitData",
+    "summary": "Dữ liệu viếng thăm khách hàng",
+    "operationId": "VisitData",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban ",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "ma_nv",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu từ ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu đến ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/TimesheetData",
+    "method": "GET",
+    "tag": "TimeSheet",
+    "summary": "Dữ liệu chấm công",
+    "operationId": "VisitData",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban ",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "ma_nv",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu từ ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": "20/06/2020",
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu đến ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": "23/06/2020",
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/DisplayData",
+    "method": "GET",
+    "tag": "DisplayData",
+    "summary": "Dữ liệu chấm điểm trung bày",
+    "operationId": "VisitData",
+    "parameters": [
+      {
+        "name": "ten_cttb",
+        "required": false,
+        "description": "Tên chương trình trưng bày",
+        "schemaType": "string",
+        "default": "Biểu mẫu tháng 5 option",
+        "enum": []
+      },
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban ",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "ma_nv",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": " ",
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu từ ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu đến ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên một trang (Min 100, max 1000)",
+        "schemaType": "integer",
+        "default": 100,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "integer",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/MarketStockData",
+    "method": "GET",
+    "tag": "MarketStockData",
+    "summary": "Dữ liệu tồn thị trường",
+    "operationId": "MarketStockData",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "ma_nv",
+        "required": false,
+        "description": "Mã nhân viên ",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "khu_vuc",
+        "required": false,
+        "description": "Mã khu vực",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "ncc",
+        "required": false,
+        "description": "Mã nhà cung cấp",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "nhan_hieu",
+        "required": false,
+        "description": "Mã nhãn hiệu",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "nganh_hang",
+        "required": false,
+        "description": "Mã ngành hàng",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu từ ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": "01/08/2022",
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": true,
+        "description": "Lấy dữ liệu đến ngày(dd/mm/yyyy)",
+        "schemaType": "string",
+        "default": "31/08/2022",
+        "enum": []
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên một trang (Min 100, max 1000)",
+        "schemaType": "integer",
+        "default": 100,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "integer",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Order",
+    "method": "GET",
+    "tag": "Order",
+    "summary": "Danh sách đơn đặt hàng",
+    "operationId": "findOrder",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhan_vien",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "trang_thai",
+        "required": false,
+        "description": "Trạng thái phiếu đặt hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "loai_kh",
+        "required": false,
+        "description": "Mã loại khách hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhom_kh",
+        "required": false,
+        "description": "Mã nhóm khách hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "khu_vuc",
+        "required": false,
+        "description": "Mã khu vực",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": "01/12/2022",
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": "31/12/2022",
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["cdate", "mdate", "odate"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 100, max 1000)",
+        "schemaType": "number",
+        "default": 100,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Bill",
+    "method": "GET",
+    "tag": "OrderSale",
+    "summary": "Danh sách đơn bán hàng",
+    "operationId": "findOrderSale",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhan_vien",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "trang_thai",
+        "required": false,
+        "description": "Trạng thái phiếu đặt hàng",
+        "schemaType": "string",
+        "default": "Chờ duyệt",
+        "enum": []
+      },
+      {
+        "name": "loai_kh",
+        "required": false,
+        "description": "Mã loại khách hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nhom_kh",
+        "required": false,
+        "description": "Mã nhóm khách hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "khu_vuc",
+        "required": false,
+        "description": "Mã khu vực",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["cdate", "mdate", "sdate", "odate"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 100, max 1000)",
+        "schemaType": "number",
+        "default": 100,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/PurchaseRequest",
+    "method": "GET",
+    "tag": "Purchase",
+    "summary": "Danh sách yêu cầu mua hàng",
+    "operationId": "findPurchase",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "trang_thai_phieu",
+        "required": false,
+        "description": "Trạng thái phiếu yêu cầu mua hàng",
+        "schemaType": "string",
+        "default": null,
+        "enum": [
+          "Chờ duyệt",
+          "Đã duyệt",
+          "Đã mua hàng",
+          "Đã nhập hàng",
+          "Từ chối"
+        ]
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": "01/12/2022",
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": "31/12/2022",
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["cdate", "mdate", "sdate", "odate"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 100, max 1000)",
+        "schemaType": "number",
+        "default": 100,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/ReturnPOrder",
+    "method": "GET",
+    "tag": "PurchaseReturns",
+    "summary": "Danh sách trả hàng mua",
+    "operationId": "findPurchaseReturns",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "trang_thai_phieu",
+        "required": false,
+        "description": "Trạng thái phiếu trả hàng mua",
+        "schemaType": "string",
+        "default": null,
+        "enum": ["Chờ duyệt", "Đã duyệt"]
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["cdate", "mdate", "sdate", "odate"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 100, max 1000)",
+        "schemaType": "number",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": null,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/ReturnOrder",
+    "method": "GET",
+    "tag": "ReturnOrder",
+    "summary": "Danh sách đơn bán hàng",
+    "operationId": "findReturnOrder",
+    "parameters": [
+      {
+        "name": "phong_ban_nv",
+        "required": false,
+        "description": "Mã phòng ban",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "nhan_vien",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "trang_thai",
+        "required": false,
+        "description": "Trạng thái phiếu đặt hàng",
+        "schemaType": "string",
+        "default": "Chờ duyệt",
+        "enum": []
+      },
+      {
+        "name": "loai_kh",
+        "required": false,
+        "description": "Mã loại khách hàng",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "nhom_kh",
+        "required": false,
+        "description": "Mã nhóm khách hàng",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "khu_vuc",
+        "required": false,
+        "description": "Mã khu vực",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": "12/11/2022",
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày (dd/MM/yyyy)",
+        "schemaType": "string",
+        "default": "15/11/2022",
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["cdate", "sdate", "mdate", "odate"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 100, max 1000)",
+        "schemaType": "number",
+        "default": 100,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/KPI",
+    "method": "GET",
+    "tag": "KPI",
+    "summary": "Doanh số KPI nhân viên",
+    "operationId": "findKPI",
+    "parameters": [
+      {
+        "name": "nhan_vien",
+        "required": false,
+        "description": "Mã nhân viên",
+        "schemaType": "string",
+        "default": "",
+        "enum": []
+      },
+      {
+        "name": "thang",
+        "required": false,
+        "description": "thang",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "nam",
+        "required": false,
+        "description": "nam",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "chuc_danh",
+        "required": false,
+        "description": "Lọc chức danh",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["member", "manager", "accountant"]
+      }
+    ]
+  },
+  {
+    "path": "/OpenAPI/V1/Inventory",
+    "method": "GET",
+    "tag": "Inventory",
+    "summary": "Phiếu kho hàng",
+    "operationId": "findItemUnit",
+    "parameters": [
+      {
+        "name": "status",
+        "required": false,
+        "description": "",
+        "schemaType": "string",
+        "default": null,
+        "enum": ["Chốt sổ", "Chưa chốt"]
+      },
+      {
+        "name": "loai_xuat_nhap",
+        "required": false,
+        "description": "",
+        "schemaType": "string",
+        "default": null,
+        "enum": [
+          "Nhập kho NCC",
+          "Xuất trả NCC",
+          "Xuât bán KH",
+          "Nhập trả KH",
+          "Xuất kho sang NV",
+          "Nhập kho từ NV",
+          "Xuất điều chỉnh",
+          "Nhập điều chỉnh",
+          "Chuyển kho",
+          "Chuyển kho từ phiếu đặt",
+          "Chuyển kho chưa duyệt"
+        ]
+      },
+      {
+        "name": "kho_hang",
+        "required": false,
+        "description": "",
+        "schemaType": "string",
+        "default": null,
+        "enum": []
+      },
+      {
+        "name": "tu_ngay",
+        "required": false,
+        "description": "Từ ngày",
+        "schemaType": "string",
+        "default": " ",
+        "enum": []
+      },
+      {
+        "name": "den_ngay",
+        "required": false,
+        "description": "Đến ngày",
+        "schemaType": "string",
+        "default": " ",
+        "enum": []
+      },
+      {
+        "name": "kieu_ngay",
+        "required": false,
+        "description": "Kiểu ngày lọc",
+        "schemaType": "string",
+        "default": " ",
+        "enum": ["Ngày sửa", "Ngày giao dịch"]
+      },
+      {
+        "name": "page_size",
+        "required": true,
+        "description": "Số bản ghi trên 1 trang(min 30, max 1000)",
+        "schemaType": "number",
+        "default": 30,
+        "enum": []
+      },
+      {
+        "name": "page_number",
+        "required": true,
+        "description": "Trang dữ liệu",
+        "schemaType": "number",
+        "default": 1,
+        "enum": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,511 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum RiskLevel {
+  GOOD
+  CHECK
+  ABNORMAL
+}
+
+enum SyncStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum ImageClassification {
+  VALID_WORK_CONTEXT
+  BLURRY_OR_UNCLEAR
+  UNRELATED_IMAGE
+  POSSIBLE_PRIVACY_RISK
+  NEEDS_HUMAN_REVIEW
+}
+
+model User {
+  id              String          @id @default(uuid())
+  email           String          @unique
+  password        String
+  role            Role            @default(USER)
+  isActive        Boolean         @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  auditLogs       AuditLog[]
+  refreshTokens   RefreshToken[]
+}
+
+// Refresh token family.
+// - store SHA-256 hash, never plaintext.
+// - rotate on use (revoke old, issue new).
+// - revoke chain on logout or theft-detection.
+model RefreshToken {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String    @unique
+  family      String
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  replacedBy  String?
+  createdAt   DateTime  @default(now())
+  userAgent   String?
+  ipAddress   String?
+
+  @@index([userId])
+  @@index([family])
+  @@index([expiresAt])
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  details   String
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model SyncJob {
+  id             String      @id @default(uuid())
+  endpoint       String
+  startDate      DateTime
+  endDate        DateTime
+  status         SyncStatus  @default(PENDING)
+  totalRecords   Int         @default(0)
+  processedCount Int         @default(0)
+  logs           String?
+  error          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  rawRecords     RawRecord[]
+
+  @@index([endpoint])
+  @@index([status])
+}
+
+model RawRecord {
+  id             String   @id @default(uuid())
+  syncJobId      String?
+  syncJob        SyncJob? @relation(fields: [syncJobId], references: [id])
+  sourceEndpoint String
+  sourceKey      String
+  sourceHash     String
+  sourceCursor   String?
+  rawJson        Json
+  firstSeenAt    DateTime @default(now())
+  lastSeenAt     DateTime @updatedAt
+
+  @@unique([sourceEndpoint, sourceKey])
+  @@index([sourceEndpoint, sourceHash])
+  @@index([syncJobId])
+}
+
+model SyncStreamState {
+  id                  String    @id @default(uuid())
+  streamName          String    @unique
+  endpoint            String
+  mode                String
+  lastCursor          String?
+  lastSuccessfulRunAt DateTime?
+  lastJobId           String?
+  configJson          Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model SyncSkippedRecord {
+  id        String   @id @default(uuid())
+  syncJobId String
+  endpoint  String
+  reason    String
+  rawJson   Json
+  createdAt DateTime @default(now())
+}
+
+// Master Data Models
+model Department {
+  id        String     @id @default(uuid())
+  code      String     @unique
+  name      String
+  employees Employee[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Employee {
+  id                   String                @id @default(uuid())
+  code                 String                @unique
+  name                 String
+  email                String?
+  phone                String?
+  roleName             String?
+  departmentId         String?
+  department           Department?           @relation(fields: [departmentId], references: [id])
+  timesheetDays        TimesheetDay[]
+  visits               Visit[]
+  orders               Order[]
+  kpiRecords           KpiRecord[]
+  inventoryDocuments   InventoryDocument[]
+  isStub               Boolean               @default(false)
+  sourceEndpoint       String?
+  sourceKey            String?
+  sourceHash           String?
+  syncJobId            String?
+  rawRecordId          String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  @@index([code])
+}
+
+model Customer {
+  id             String   @id @default(uuid())
+  code           String   @unique
+  name           String
+  address        String?
+  phone          String?
+  visits         Visit[]
+  orders         Order[]
+  isStub         Boolean  @default(false)
+  sourceEndpoint String?
+  sourceKey      String?
+  sourceHash     String?
+  syncJobId      String?
+  rawRecordId    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([code])
+}
+
+model Route {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  code           String          @unique
+  name           String
+  unit           String?
+  price          Float           @default(0)
+  orderItems     OrderItem[]
+  inventoryItems InventoryItem[]
+  isStub         Boolean         @default(false)
+  sourceEndpoint String?
+  sourceKey      String?
+  sourceHash     String?
+  syncJobId      String?
+  rawRecordId    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([code])
+}
+
+model Warehouse {
+  id                 String              @id @default(uuid())
+  code               String              @unique
+  name               String
+  inventoryDocuments InventoryDocument[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([code])
+}
+
+// Timesheet Models
+model TimesheetDay {
+  id             String               @id @default(uuid())
+  employeeId     String
+  employee       Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date           DateTime             // YYYY-MM-DD
+  weekday        String?
+  events         TimesheetEvent[]
+  evaluation     TimesheetEvaluation?
+  sourceEndpoint String?
+  sourceKey      String?
+  sourceHash     String?
+  syncJobId      String?
+  rawRecordId    String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@unique([employeeId, date])
+  @@index([date])
+}
+
+model TimesheetEvent {
+  id             String       @id @default(uuid())
+  timesheetDayId String
+  timesheetDay   TimesheetDay @relation(fields: [timesheetDayId], references: [id], onDelete: Cascade)
+  type           String
+  time           DateTime
+  location       String?
+  note           String?
+  images         String[]
+  sourceHash     String?      @unique
+  visionAnalyses VisionAnalysis[]
+  createdAt      DateTime     @default(now())
+}
+
+model TimesheetEvaluation {
+  id             String       @id @default(uuid())
+  timesheetDayId String       @unique
+  timesheetDay   TimesheetDay @relation(fields: [timesheetDayId], references: [id], onDelete: Cascade)
+  score          Int
+  riskLevel      RiskLevel
+  statusCodes    String[]
+  reasons        String[]
+  suggestions    String[]
+  hasCheckIn     Boolean
+  hasCheckOut    Boolean
+  firstCheckIn   String?
+  lastCheckOut   String?
+  workHours      Float?
+  eventCount     Int
+  lateMinutes    Int?
+  earlyLeaveMinutes Int?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([riskLevel])
+}
+
+// Visit Models
+model Visit {
+  id               String            @id @default(uuid())
+  employeeId       String
+  employee         Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  customerId       String
+  customer         Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  date             DateTime
+  checkin          DateTime?
+  checkout         DateTime?
+  addressCheckin   String?
+  isOnRoute        Boolean           @default(true)
+  hasOrder         Boolean           @default(false)
+  hasStock         Boolean           @default(false)
+  note             String?
+  images           String[]
+  evaluation       VisitEvaluation?
+  visionAnalyses   VisionAnalysis[]
+  sourceEndpoint   String?
+  sourceKey        String?
+  sourceHash       String?           @unique
+  syncJobId        String?
+  rawRecordId      String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([date])
+}
+
+model VisitEvaluation {
+  id        String   @id @default(uuid())
+  visitId   String   @unique
+  visit     Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  score     Int
+  riskLevel RiskLevel
+  reasons   String[]
+  createdAt DateTime @default(now())
+}
+
+// Business Models
+model Order {
+  id             String      @id @default(uuid())
+  employeeId     String
+  employee       Employee    @relation(fields: [employeeId], references: [id])
+  customerId     String
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  code           String      @unique
+  status         String
+  totalAmount    Float
+  vatAmount      Float       @default(0)
+  discount       Float       @default(0)
+  payableAmount  Float
+  date           DateTime
+  items          OrderItem[]
+  sourceEndpoint String?
+  sourceKey      String?
+  sourceHash     String?
+  syncJobId      String?
+  rawRecordId    String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([date])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Float
+  price     Float
+  total     Float
+  isPromo   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model KpiRecord {
+  id             String   @id @default(uuid())
+  employeeId     String
+  employee       Employee @relation(fields: [employeeId], references: [id])
+  kpiName        String
+  targetValue    Float
+  actualValue    Float
+  achievementRate Float
+  date           DateTime
+  sourceEndpoint String?
+  sourceKey      String?
+  sourceHash     String?  @unique
+  syncJobId      String?
+  rawRecordId    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([date])
+}
+
+model InventoryDocument {
+  id             String          @id @default(uuid())
+  employeeId     String?
+  employee       Employee?       @relation(fields: [employeeId], references: [id])
+  warehouseId    String
+  warehouse      Warehouse       @relation(fields: [warehouseId], references: [id])
+  code           String          @unique
+  type           String
+  date           DateTime
+  items          InventoryItem[]
+  sourceEndpoint String?
+  sourceKey      String?
+  sourceHash     String?
+  syncJobId      String?
+  rawRecordId    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([date])
+}
+
+model InventoryItem {
+  id                  String            @id @default(uuid())
+  inventoryDocumentId String
+  inventoryDocument   InventoryDocument @relation(fields: [inventoryDocumentId], references: [id], onDelete: Cascade)
+  productId           String
+  product             Product           @relation(fields: [productId], references: [id])
+  quantity            Float
+  value               Float             @default(0)
+  createdAt           DateTime          @default(now())
+}
+
+// AI Models
+model AiAnalysisRun {
+  id                   String                 @id @default(uuid())
+  startDate            DateTime
+  endDate              DateTime
+  executiveSummary     String
+  recommendations      AiRecommendation[]
+  employeeComments     AiEmployeeComment[]
+  dataQualityWarnings  AiDataQualityWarning[]
+  isApproved           Boolean                @default(false)
+  findings             AiInsight[]
+  model                String?
+  promptVersion        String?
+  inputHash            String?
+  outputHash           String?
+  tokenUsagePrompt     Int?
+  tokenUsageCompletion Int?
+  status               String                 @default("PENDING") // PENDING | COMPLETED | FAILED
+  errorMessage         String?
+  provider             String?
+  baseHost             String?
+  outputJson           Json?
+  latencyMs            Int?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+}
+
+model AiRecommendation {
+  id        String        @id @default(uuid())
+  runId     String
+  run       AiAnalysisRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  priority  String
+  action    String
+  ownerRole String
+  dueHint   String?
+  createdAt DateTime      @default(now())
+}
+
+model AiEmployeeComment {
+  id              String        @id @default(uuid())
+  runId           String
+  run             AiAnalysisRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  employeeCode    String
+  comment         String
+  suggestedAction String
+  createdAt       DateTime      @default(now())
+}
+
+model AiDataQualityWarning {
+  id        String        @id @default(uuid())
+  runId     String
+  run       AiAnalysisRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  message   String
+  createdAt DateTime      @default(now())
+}
+
+model AiInsight {
+  id             String        @id @default(uuid())
+  runId          String
+  run            AiAnalysisRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  severity       String        // info, warning, critical
+  title          String
+  evidence       String
+  affectedUnits  String[]      // Codes of employees or departments
+  createdAt      DateTime      @default(now())
+}
+
+model VisionAnalysis {
+  id               String               @id @default(uuid())
+  visitId          String?
+  visit            Visit?               @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  timesheetEventId String?
+  timesheetEvent   TimesheetEvent?      @relation(fields: [timesheetEventId], references: [id], onDelete: Cascade)
+  imageUrl         String
+  classification   ImageClassification
+  confidence       Float
+  reason           String
+  visibleIssues    String[]
+  createdAt        DateTime             @default(now())
+}
