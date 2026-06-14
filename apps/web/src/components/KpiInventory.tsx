@@ -371,7 +371,7 @@ export default function KpiInventory() {
                 </Col>
                 <Col xs={24} sm={8}>
                   <StatCard
-                    label="Đã đạt"
+                    label="Đã đạt (trang này)"
                     value={<NumberCell value={achievedKpi} />}
                     icon={<TrophyOutlined />}
                     tone="success"
@@ -379,7 +379,7 @@ export default function KpiInventory() {
                 </Col>
                 <Col xs={24} sm={8}>
                   <StatCard
-                    label="Tỷ lệ đạt TB"
+                    label="Tỷ lệ đạt TB (trang này)"
                     value={
                       <span className="num">
                         {Math.round(avgAchievement * 100)}%

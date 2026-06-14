@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../../prisma.service";
 
 @Injectable()
@@ -65,7 +65,21 @@ export class OrdersService {
     return { items, total, page, pageSize };
   }
 
-  async approve(id: string) {
+  async approve(id: string, userId?: string, ipAddress?: string) {
+    const currentOrder = await this.prisma.order.findUnique({
+      where: { id },
+    });
+
+    if (!currentOrder) {
+      throw new BadRequestException("Không tìm thấy đơn hàng.");
+    }
+
+    if (currentOrder.status !== "PENDING") {
+      throw new BadRequestException(
+        `Không thể phê duyệt đơn hàng ở trạng thái: ${currentOrder.status}`,
+      );
+    }
+
     const order = await this.prisma.order.update({
       where: { id },
       data: { status: "APPROVED" },
@@ -73,6 +87,8 @@ export class OrdersService {
 
     await this.prisma.auditLog.create({
       data: {
+        userId,
+        ipAddress,
         action: "ORDER_APPROVE",
         details: `Đã duyệt đơn hàng mã ${order.code} (ID: ${id})`,
       },
@@ -81,7 +97,21 @@ export class OrdersService {
     return order;
   }
 
-  async reject(id: string) {
+  async reject(id: string, userId?: string, ipAddress?: string) {
+    const currentOrder = await this.prisma.order.findUnique({
+      where: { id },
+    });
+
+    if (!currentOrder) {
+      throw new BadRequestException("Không tìm thấy đơn hàng.");
+    }
+
+    if (currentOrder.status !== "PENDING") {
+      throw new BadRequestException(
+        `Không thể từ chối đơn hàng ở trạng thái: ${currentOrder.status}`,
+      );
+    }
+
     const order = await this.prisma.order.update({
       where: { id },
       data: { status: "REJECTED" },
@@ -89,6 +119,8 @@ export class OrdersService {
 
     await this.prisma.auditLog.create({
       data: {
+        userId,
+        ipAddress,
         action: "ORDER_REJECT",
         details: `Đã từ chối đơn hàng mã ${order.code} (ID: ${id})`,
       },

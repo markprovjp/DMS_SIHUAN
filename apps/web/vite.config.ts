@@ -13,4 +13,35 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1200,
+    commonjsOptions: {
+      include: [/[\\/]packages[\\/]shared[\\/]/, /node_modules/],
+    },
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("echarts")) {
+              return "vendor-echarts";
+            }
+            if (id.includes("antd") || id.includes("@ant-design")) {
+              return "vendor-antd";
+            }
+            if (id.includes("lucide-react")) {
+              return "vendor-lucide";
+            }
+            if (
+              id.includes("react") ||
+              id.includes("react-dom") ||
+              id.includes("react-router-dom")
+            ) {
+              return "vendor-react";
+            }
+            return "vendor-others";
+          }
+        },
+      },
+    },
+  },
 });

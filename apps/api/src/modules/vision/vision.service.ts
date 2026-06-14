@@ -115,23 +115,26 @@ export class VisionService {
       process.env.OPENAI_VISION_MODEL ||
       "gpt-4o";
 
-    const visit = await this.prisma.visit.findUnique({
-      where: { id: visitId },
-      include: { employee: true, customer: true },
-    });
-
-    if (!visit) {
-      throw new BadRequestException(
-        "Không tìm thấy lượt viếng thăm tương ứng.",
-      );
+    let visit: any = null;
+    if (visitId) {
+      visit = await this.prisma.visit.findUnique({
+        where: { id: visitId },
+        include: { employee: true, customer: true },
+      });
+      if (!visit) {
+        throw new BadRequestException(
+          "Không tìm thấy lượt viếng thăm tương ứng.",
+        );
+      }
     }
 
     const context = legacyContext ?? {
-      employeeCode: visit.employee.code,
-      date: visit.date.toISOString().substring(0, 10),
+      employeeCode: visit ? visit.employee.code : "Không rõ",
+      date: visit ? visit.date.toISOString().substring(0, 10) : "Không rõ",
       checkType: "Viếng thăm thực địa",
-      locationText:
-        visit.customer.name + " - " + (visit.customer.address || ""),
+      locationText: visit
+        ? visit.customer.name + " - " + (visit.customer.address || "")
+        : "Không rõ",
     };
 
     let parsed: VisionOutput | null = null;
@@ -216,7 +219,9 @@ Hãy điều chỉnh định dạng JSON trả về sao cho khớp 100% với sc
       await this.prisma.auditLog.create({
         data: {
           action: "VISION_ANALYSIS",
-          details: `Phân tích ảnh viếng thăm của nhân viên ${visit.employee.code} sử dụng Gateway (Host: ${baseHost}). Kết quả: ${classification}`,
+          details: `Phân tích ảnh viếng thăm của nhân viên ${
+            visit ? visit.employee.code : (context.employeeCode || "Không rõ")
+          } sử dụng Gateway (Host: ${baseHost}). Kết quả: ${classification}`,
         },
       });
 

@@ -7,6 +7,7 @@ import {
   UseGuards,
   DefaultValuePipe,
   ParseIntPipe,
+  Req,
 } from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -40,13 +41,17 @@ export class OrdersController {
 
   @Roles(Role.ADMIN, Role.MANAGER)
   @Post(":id/approve")
-  async approve(@Param("id") id: string) {
-    return this.ordersService.approve(id);
+  async approve(@Param("id") id: string, @Req() req: any) {
+    const userId = req.user?.id;
+    const ip = req.ip;
+    return this.ordersService.approve(id, userId, ip);
   }
 
   @Roles(Role.ADMIN, Role.MANAGER)
   @Post(":id/reject")
-  async reject(@Param("id") id: string) {
-    return this.ordersService.reject(id);
+  async reject(@Param("id") id: string, @Req() req: any) {
+    const userId = req.user?.id;
+    const ip = req.ip;
+    return this.ordersService.reject(id, userId, ip);
   }
 }

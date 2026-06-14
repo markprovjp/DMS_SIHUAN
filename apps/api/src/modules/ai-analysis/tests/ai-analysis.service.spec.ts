@@ -286,7 +286,7 @@ describe("AiAnalysisService Retry & Schema Validation", () => {
     expect(input.visitByEmployee[0].employeeCode).toBe("NV01");
     expect(input.unusualRoutes).toHaveLength(1);
     expect(input.unusualRoutes[0].employeeCode).toBe("NV01");
-    expect(input.missedCustomers).toEqual([{ code: "C02", name: "Dai Ly B" }]);
+    expect(input.missedCustomers).toBe("not available");
     expect(input.checkInWithoutVisitOrOrder).toHaveLength(1);
     expect(input.checkInWithoutVisitOrOrder[0].employeeCode).toBe("NV02"); // Co check-in nhung ko co visit
 

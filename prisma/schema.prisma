@@ -85,6 +85,9 @@ model AuditLog {
   details   String
   ipAddress String?
   createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([userId, createdAt(sort: Desc)])
 }
 
 model SyncJob {
@@ -178,6 +181,7 @@ model Employee {
   updatedAt            DateTime              @updatedAt
 
   @@index([code])
+  @@index([departmentId])
 }
 
 model Customer {
@@ -198,6 +202,7 @@ model Customer {
   updatedAt      DateTime @updatedAt
 
   @@index([code])
+  @@index([name])
 }
 
 model Route {
@@ -260,6 +265,7 @@ model TimesheetDay {
 
   @@unique([employeeId, date])
   @@index([date])
+  @@index([employeeId, date(sort: Desc)])
 }
 
 model TimesheetEvent {
@@ -326,6 +332,8 @@ model Visit {
   updatedAt        DateTime          @updatedAt
 
   @@index([date])
+  @@index([employeeId, date(sort: Desc)])
+  @@index([customerId, date(sort: Desc)])
 }
 
 model VisitEvaluation {
@@ -362,6 +370,9 @@ model Order {
   updatedAt      DateTime    @updatedAt
 
   @@index([date])
+  @@index([employeeId, date(sort: Desc)])
+  @@index([customerId, date(sort: Desc)])
+  @@index([status])
 }
 
 model OrderItem {
@@ -395,6 +406,7 @@ model KpiRecord {
   updatedAt      DateTime @updatedAt
 
   @@index([date])
+  @@index([employeeId, date(sort: Desc)])
 }
 
 model InventoryDocument {
@@ -416,6 +428,7 @@ model InventoryDocument {
   updatedAt      DateTime        @updatedAt
 
   @@index([date])
+  @@index([warehouseId, date(sort: Desc)])
 }
 
 model InventoryItem {
@@ -454,6 +467,8 @@ model AiAnalysisRun {
   latencyMs            Int?
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
+
+  @@index([status, createdAt(sort: Desc)])
 }
 
 model AiRecommendation {

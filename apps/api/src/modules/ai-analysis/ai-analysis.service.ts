@@ -198,6 +198,8 @@ export class AiAnalysisService {
         early: number;
         totalScore: number;
         name: string;
+        missingCheckIn: number;
+        missingCheckOut: number;
       }
     >();
     days.forEach((d) => {
@@ -209,13 +211,17 @@ export class AiAnalysisService {
         early: 0,
         totalScore: 0,
         name: d.employee.name,
+        missingCheckIn: 0,
+        missingCheckOut: 0,
       };
       stats.total++;
       if (d.evaluation) {
         stats.totalScore += d.evaluation.score;
         if (d.evaluation.riskLevel === "ABNORMAL") stats.abnormal++;
         if (d.evaluation.statusCodes.includes("LATE")) stats.late++;
-        if (d.evaluation.statusCodes.includes("EARLY")) stats.early++;
+        if (d.evaluation.statusCodes.includes("EARLY_LEAVE")) stats.early++;
+        if (!d.evaluation.hasCheckIn) stats.missingCheckIn++;
+        if (!d.evaluation.hasCheckOut) stats.missingCheckOut++;
       }
       empTimesheetMap.set(code, stats);
     });
@@ -230,6 +236,8 @@ export class AiAnalysisService {
         abnormalCount: stats.abnormal,
         lateCount: stats.late,
         earlyCount: stats.early,
+        missingCheckInCount: stats.missingCheckIn,
+        missingCheckOutCount: stats.missingCheckOut,
       }),
     );
 
@@ -287,8 +295,20 @@ export class AiAnalysisService {
 
     // highMissingDataEmployees
     const highMissingDataEmployees = timesheetByEmployee
-      .filter((e) => e.abnormalCount > 2)
-      .slice(0, 10);
+      .map((e) => ({
+        ...e,
+        totalMissing: e.missingCheckInCount + e.missingCheckOutCount,
+      }))
+      .filter((e) => e.totalMissing > 0)
+      .sort((a, b) => b.totalMissing - a.totalMissing)
+      .slice(0, 10)
+      .map((e) => ({
+        employeeCode: e.employeeCode,
+        employeeName: e.employeeName,
+        missingCheckInCount: e.missingCheckInCount,
+        missingCheckOutCount: e.missingCheckOutCount,
+        totalMissing: e.totalMissing,
+      }));
 
     // abnormalTimesheetDays
     const dayAnomalyMap = new Map<string, number>();
@@ -302,6 +322,20 @@ export class AiAnalysisService {
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
+
+    // 3. MODULE ORDER (Được tải sớm để phục vụ kiểm tra chéo)
+    const orders = await this.prisma.order.findMany({
+      where: {
+        date: { gte: start, lte: end },
+      },
+      include: {
+        employee: true,
+        customer: true,
+        items: {
+          include: { product: true },
+        },
+      },
+    });
 
     // 2. MODULE VISIT
     const visits = await this.prisma.visit.findMany({
@@ -369,13 +403,22 @@ export class AiAnalysisService {
           v.employeeId === empId &&
           v.date.toISOString().substring(0, 10) === dStr,
       );
-      if (d.evaluation?.hasCheckIn && dayVisits.length === 0) {
+      const dayOrders = orders.filter(
+        (o) =>
+          o.employeeId === empId &&
+          o.date.toISOString().substring(0, 10) === dStr,
+      );
+      if (
+        d.evaluation?.hasCheckIn &&
+        dayVisits.length === 0 &&
+        dayOrders.length === 0
+      ) {
         checkInWithoutVisitOrOrder.push({
           employeeCode: empCode,
           employeeName: d.employee.name,
           date: dStr,
           reason:
-            "Có check-in đầu ngày nhưng không ghi nhận lượt viếng thăm (visit) nào",
+            "Có check-in đầu ngày nhưng không ghi nhận lượt viếng thăm (visit) hay đơn hàng (order) nào",
         });
       }
     });
@@ -402,33 +445,7 @@ export class AiAnalysisService {
       }));
 
     // missedCustomers
-    const allCustomers = await this.prisma.customer.findMany({
-      select: { code: true, name: true },
-    });
-    const visitedCustomerCodes = new Set(visits.map((v) => v.customer.code));
-    const missedCustomersList = allCustomers.filter(
-      (c) => !visitedCustomerCodes.has(c.code),
-    );
-    const missedCustomers =
-      missedCustomersList.length > 0
-        ? missedCustomersList
-            .slice(0, 15)
-            .map((c) => ({ code: c.code, name: c.name }))
-        : "not available";
-
-    // 3. MODULE ORDER
-    const orders = await this.prisma.order.findMany({
-      where: {
-        date: { gte: start, lte: end },
-      },
-      include: {
-        employee: true,
-        customer: true,
-        items: {
-          include: { product: true },
-        },
-      },
-    });
+    const missedCustomers = "not available";
 
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce((sum, o) => sum + o.payableAmount, 0);

@@ -1,90 +1,10 @@
-/**
- * Test logic của page.ts helper mà KHÔNG import trực tiếp file TS từ apps/web
- * (vitest của api không resolve TS ngoài workspace của nó).
- *
- * Helper page.ts là pure logic, không có React/Node deps nên test bằng cách
- * mirror logic ở đây; nếu helper đổi behavior, chỗ này sẽ diverge. Đây là
- * trade-off giữa test coverage và setup cost cho monorepo. Helper nên được
- * move sang shared/ nếu muốn test từ cả 2 phía.
- *
- * (Logic copy y nguyên từ apps/web/src/utils/page.ts)
- */
-
-interface PaginatedLike<T = unknown> {
-  items?: T[];
-  total?: number;
-  page?: number;
-  pageSize?: number;
-}
-
-interface NormalizedPage<T = unknown> {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
-
-function isPaginated(v: unknown): v is PaginatedLike {
-  return (
-    typeof v === "object" &&
-    v !== null &&
-    !Array.isArray(v) &&
-    Array.isArray((v as PaginatedLike).items)
-  );
-}
-
-function getPageItems<T = unknown>(payload: unknown): T[] {
-  if (Array.isArray(payload)) return payload as T[];
-  if (isPaginated(payload)) return (payload.items ?? []) as T[];
-  return [];
-}
-
-function getPageTotal(payload: unknown): number {
-  if (Array.isArray(payload)) return payload.length;
-  if (isPaginated(payload)) {
-    if (typeof payload.total === "number") return payload.total;
-    return payload.items?.length ?? 0;
-  }
-  return 0;
-}
-
-function normalizePage<T = unknown>(payload: unknown): NormalizedPage<T> {
-  if (Array.isArray(payload)) {
-    return {
-      items: payload as T[],
-      total: payload.length,
-      page: 1,
-      pageSize: payload.length,
-    };
-  }
-  if (isPaginated(payload)) {
-    return {
-      items: (payload.items ?? []) as T[],
-      total: payload.total ?? payload.items?.length ?? 0,
-      page: payload.page ?? 1,
-      pageSize: payload.pageSize ?? payload.items?.length ?? 0,
-    };
-  }
-  return { items: [], total: 0, page: 1, pageSize: 0 };
-}
-
-function normalizePageResponse<T = any>(
-  payload: any,
-): { items: T[]; total: number } {
-  if (!payload) return { items: [], total: 0 };
-  if (Array.isArray(payload)) {
-    return { items: payload, total: payload.length };
-  }
-  if (typeof payload === "object") {
-    const items = Array.isArray(payload.items) ? payload.items : [];
-    const total =
-      typeof payload.total === "number" ? payload.total : items.length;
-    return { items, total };
-  }
-  return { items: [], total: 0 };
-}
-
 import { describe, test, expect } from "vitest";
+import {
+  getPageItems,
+  getPageTotal,
+  normalizePage,
+  normalizePageResponse,
+} from "@dms-admin/shared";
 
 describe("page helper - normalize paginated response", () => {
   test("array input returns same array", () => {
