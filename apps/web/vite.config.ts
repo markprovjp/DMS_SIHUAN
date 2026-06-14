@@ -13,6 +13,9 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    include: ["@dms-admin/shared"],
+  },
   build: {
     chunkSizeWarningLimit: 1200,
     commonjsOptions: {
