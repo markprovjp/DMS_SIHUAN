@@ -71,6 +71,14 @@ export default function Settings() {
               : ""
             : aiApiKeyObj || "";
 
+        const mobiworkUserIdObj = config.mobiworkUserId;
+        const mobiworkUserIdVal =
+          typeof mobiworkUserIdObj === "object"
+            ? mobiworkUserIdObj?.configured
+              ? mobiworkUserIdObj.masked
+              : ""
+            : mobiworkUserIdObj || "";
+
         form.setFieldsValue({
           shiftStart: config.shiftStart || "08:00",
           lateAfter: config.lateAfter || "08:15",
@@ -89,7 +97,7 @@ export default function Settings() {
           aiReasoningEffort: config.aiReasoningEffort || "high",
           aiVerbosity: config.aiVerbosity || "medium",
           mobiworkBase: config.mobiworkApiBase || "https://openapi.mobiwork.vn",
-          mobiworkUserId: config.mobiworkUserId || "",
+          mobiworkUserId: mobiworkUserIdVal,
           mobiworkToken: "",
           ...weights,
         });

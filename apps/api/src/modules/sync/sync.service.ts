@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  BadRequestException,
   OnModuleInit,
   Logger,
 } from "@nestjs/common";
@@ -9,6 +10,7 @@ import { SettingsService } from "../settings/settings.service";
 import { MobiworkClient } from "@dms-admin/mobiwork-client";
 import { SyncJobRunner } from "./sync-job.runner";
 import { InProcessJobQueue } from "../../common/jobs/in-process.job-queue";
+import { SyncStreamRegistry } from "./sync-stream.registry";
 
 @Injectable()
 export class SyncService implements OnModuleInit {
@@ -19,6 +21,7 @@ export class SyncService implements OnModuleInit {
     private settingsService: SettingsService,
     private syncJobRunner: SyncJobRunner,
     private jobQueue: InProcessJobQueue,
+    private streamRegistry: SyncStreamRegistry,
   ) {}
 
   onModuleInit() {
@@ -35,17 +38,32 @@ export class SyncService implements OnModuleInit {
       );
       // SyncJobRunner cần syncJobId để cập nhật record; nếu API cũ thì fallback
       // tạo record mới từ startDate/endDate.
-      await this.syncJobRunner.runSync(endpoint, startDate, endDate);
+      await this.syncJobRunner.runSync(
+        endpoint,
+        startDate,
+        endDate,
+        "FULL_REFRESH_OVERWRITE_DEDUPED",
+        syncJobId,
+      );
       ctx.log("Sync completed");
     });
   }
 
   private async getMobiworkClient(): Promise<MobiworkClient> {
     const settings = await this.settingsService.getAll();
-    const userId = process.env.MOBIWORK_USER_ID || settings["userId"] || "";
-    const token = process.env.MOBIWORK_TOKEN || settings["token"] || "";
+    const userId =
+      process.env.MOBIWORK_USER_ID ||
+      settings["mobiworkUserId"] ||
+      settings["userId"] ||
+      "";
+    const token =
+      process.env.MOBIWORK_TOKEN ||
+      settings["mobiworkToken"] ||
+      settings["token"] ||
+      "";
     const apiBase =
       process.env.MOBIWORK_API_BASE ||
+      settings["mobiworkApiBase"] ||
       settings["apiBase"] ||
       "https://openapi.mobiwork.vn";
 
@@ -54,7 +72,11 @@ export class SyncService implements OnModuleInit {
 
   async getEndpoints() {
     const client = await this.getMobiworkClient();
-    return client.getEndpoints();
+    const all = await client.getEndpoints();
+    // Chỉ trả về các endpoint được đăng ký trong SyncStreamRegistry (sync supported)
+    return all.filter(
+      (e: any) => this.streamRegistry.getDefinition(e.path) !== undefined,
+    );
   }
 
   async getJobs() {
@@ -101,6 +123,11 @@ export class SyncService implements OnModuleInit {
     startDateStr: string,
     endDateStr: string,
   ): Promise<string> {
+    if (this.streamRegistry.getDefinition(endpoint) === undefined) {
+      throw new BadRequestException(
+        `Stream definition not found for ${endpoint}`,
+      );
+    }
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
     const syncJob = await this.prisma.syncJob.create({

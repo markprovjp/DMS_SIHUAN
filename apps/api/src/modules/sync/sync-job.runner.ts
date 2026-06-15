@@ -19,10 +19,19 @@ export class SyncJobRunner {
 
   private async getMobiworkClient(): Promise<MobiworkClient> {
     const settings = await this.settingsService.getAll();
-    const userId = process.env.MOBIWORK_USER_ID || settings["userId"] || "";
-    const token = process.env.MOBIWORK_TOKEN || settings["token"] || "";
+    const userId =
+      process.env.MOBIWORK_USER_ID ||
+      settings["mobiworkUserId"] ||
+      settings["userId"] ||
+      "";
+    const token =
+      process.env.MOBIWORK_TOKEN ||
+      settings["mobiworkToken"] ||
+      settings["token"] ||
+      "";
     const apiBase =
       process.env.MOBIWORK_API_BASE ||
+      settings["mobiworkApiBase"] ||
       settings["apiBase"] ||
       "https://openapi.mobiwork.vn";
 
@@ -46,6 +55,7 @@ export class SyncJobRunner {
     startDateStr: string,
     endDateStr: string,
     mode: string = "FULL_REFRESH_OVERWRITE_DEDUPED",
+    existingJobId?: string,
   ): Promise<string> {
     const lockId = `sync:${endpoint}:${startDateStr}:${endDateStr}:${mode}`;
 
@@ -60,23 +70,35 @@ export class SyncJobRunner {
     const startDate = this.parseMobiworkDate(startDateStr);
     const endDate = this.parseMobiworkDate(endDateStr);
 
-    const job = await this.prisma.syncJob.create({
-      data: {
-        endpoint,
-        startDate,
-        endDate,
-        status: SyncStatus.RUNNING,
-        logs: "Khởi động hàng đợi công việc đồng bộ (In-Process Runner)...\n",
-      },
-    });
+    let jobId = existingJobId;
+    if (jobId) {
+      await this.prisma.syncJob.update({
+        where: { id: jobId },
+        data: {
+          status: SyncStatus.RUNNING,
+          logs: "Khởi động hàng đợi công việc đồng bộ (In-Process Runner)...\n",
+        },
+      });
+    } else {
+      const job = await this.prisma.syncJob.create({
+        data: {
+          endpoint,
+          startDate,
+          endDate,
+          status: SyncStatus.RUNNING,
+          logs: "Khởi động hàng đợi công việc đồng bộ (In-Process Runner)...\n",
+        },
+      });
+      jobId = job.id;
+    }
 
-    this.executeSync(job.id, endpoint, startDateStr, endDateStr, lockId).catch(
+    this.executeSync(jobId, endpoint, startDateStr, endDateStr, lockId).catch(
       (err) => {
-        console.error(`Sync job ${job.id} failed in background:`, err);
+        console.error(`Sync job ${jobId} failed in background:`, err);
       },
     );
 
-    return job.id;
+    return jobId;
   }
 
   private async executeSync(

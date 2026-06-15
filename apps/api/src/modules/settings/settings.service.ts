@@ -16,9 +16,9 @@ export class SettingsService {
 
   private getEnvironmentSettings(): Record<string, string> {
     const envMap: Record<string, string | undefined> = {
-      apiBase: process.env.MOBIWORK_API_BASE,
-      userId: process.env.MOBIWORK_USER_ID,
-      token: process.env.MOBIWORK_TOKEN,
+      mobiworkApiBase: process.env.MOBIWORK_API_BASE,
+      mobiworkUserId: process.env.MOBIWORK_USER_ID,
+      mobiworkToken: process.env.MOBIWORK_TOKEN,
       aiProvider: process.env.AI_PROVIDER,
       aiBaseUrl: process.env.AI_BASE_URL,
       aiWireApi: process.env.AI_WIRE_API,
